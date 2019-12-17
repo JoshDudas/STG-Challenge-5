@@ -15,6 +15,10 @@ class AutomatedChromeBrowser (unittest.TestCase):
         self.unique_model_dict = {}
         self.damage_type_dict = {'REAR END' : 0, 'FRONT END' : 0, 'MINOR DENT/SCRATCHES' : 0, 'UNDERCARRIAGE' : 0, 'MISC' : 0}
 
+    def wait_for_spinner(self):
+        self.driver_wait.until(
+            expected_conditions.invisibility_of_element((By.XPATH, '//img[@src="/images/icons/loader.gif"]')))
+
     def perform_make_search(self):
         self.driver.maximize_window()
         self.driver.get("https://www.copart.com")
@@ -25,13 +29,11 @@ class AutomatedChromeBrowser (unittest.TestCase):
         self.driver_wait.until(expected_conditions.visibility_of_element_located(
             (By.XPATH, '//table[@id="serverSideDataTable"]//span[@data-uname="lotsearchLotmodel"]')))
         self.driver.find_element(By.XPATH, "//select[@name='serverSideDataTable_length']").click()
-        self.driver_wait.until(
-            expected_conditions.invisibility_of_element((By.XPATH, '//img[@src="/images/icons/loader.gif"]')))
+        self.wait_for_spinner()
         self.driver.find_element(By.XPATH, "//option[@value='100']").click()
 
     def get_model_list(self):
-        self.driver_wait.until(
-            expected_conditions.invisibility_of_element((By.XPATH, '//img[@src="/images/icons/loader.gif"]')))
+        self.wait_for_spinner()
         self.all_models_in_list = self.driver.find_elements(By.XPATH,
                                                             "//table[@id='serverSideDataTable']//span[@data-uname='lotsearchLotmodel']")
 
@@ -73,7 +75,7 @@ class AutomatedChromeBrowser (unittest.TestCase):
         for key in self.unique_model_dict.keys():
             print("{}: {}".format(key, self.unique_model_dict[key]))
 
-        print("\n")
+        print("")
 
         for key in self.damage_type_dict.keys():
             print("{}: {}".format(key, self.damage_type_dict[key]))
