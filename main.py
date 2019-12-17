@@ -33,7 +33,6 @@ class AutomatedChromeBrowser (unittest.TestCase):
         self.driver.find_element(By.XPATH, "//option[@value='100']").click()
 
     def get_model_list(self):
-        self.wait_for_spinner()
         self.all_models_in_list = self.driver.find_elements(By.XPATH,
                                                             "//table[@id='serverSideDataTable']//span[@data-uname='lotsearchLotmodel']")
 
@@ -83,6 +82,7 @@ class AutomatedChromeBrowser (unittest.TestCase):
     def test_searchForModel(self):
         self.perform_make_search()
         self.change_list_size()
+        self.wait_for_spinner()
         self.get_model_list()
         self.get_damage_list()
         self.create_model_dict_from_list()
