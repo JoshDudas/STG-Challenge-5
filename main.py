@@ -13,24 +13,35 @@ class AutomatedChromeBrowser (unittest.TestCase):
         self.damage_type_list = []
         self.unique_model_set = []
         self.unique_model_dict = {}
-        self.damage_type_dict = {'REAR END' : 0, 'FRONT END' : 0, 'MINOR DENT/SCRATCHES' : 0, 'UNDERCARRIAGE' : 0, 'MISC' : 0}
+        self.damage_type_dict = {'REAR END': 0, 'FRONT END': 0, 'MINOR DENT/SCRATCHES': 0, 'UNDERCARRIAGE': 0, 'MISC': 0}
 
     def wait_for_spinner(self):
+        # created since there a couple functions that need to wait for loading spinner to disappear before continuing
         self.driver_wait.until(
             expected_conditions.invisibility_of_element((By.XPATH, '//img[@src="/images/icons/loader.gif"]')))
 
     def perform_make_search(self):
-        self.driver.maximize_window()
         self.driver.get("https://www.copart.com")
-        self.driver.find_element(By.XPATH, "//input[@id='input-search']").send_keys("porsche")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        search_field = self.driver.find_element(By.XPATH, "//input[@id='input-search']")
+        search_field.send_keys("porsche")
+
+        submit_btn = self.driver.find_element(By.XPATH, "//button[@type='submit']")
+        submit_btn.click()
 
     def change_list_size(self):
         self.driver_wait.until(expected_conditions.visibility_of_element_located(
             (By.XPATH, '//table[@id="serverSideDataTable"]//span[@data-uname="lotsearchLotmodel"]')))
-        self.driver.find_element(By.XPATH, "//select[@name='serverSideDataTable_length']").click()
+
+        search_result_table_length = self.driver.find_element(By.XPATH, "//select[@name='serverSideDataTable_length']")
+        search_result_table_length.click()
+
         self.wait_for_spinner()
-        self.driver.find_element(By.XPATH, "//option[@value='100']").click()
+
+        search_result_table_length_100_option = self.driver.find_element(By.XPATH, "//option[@value='100']")
+        search_result_table_length_100_option.click()
+
+        search_result_table_length.click()
 
     def get_model_list(self):
         self.all_models_in_list = self.driver.find_elements(By.XPATH,
@@ -59,13 +70,14 @@ class AutomatedChromeBrowser (unittest.TestCase):
 
     def sort_damage_types(self):
         for damage_type in self.damage_type_list:
-            if damage_type.text == 'REAR END':
+            damage = damage_type.get_attribute('textContent')
+            if damage == 'REAR END':
                 self.damage_type_dict['REAR END'] += 1
-            elif damage_type.text == 'FRONT END':
+            elif damage == 'FRONT END':
                 self.damage_type_dict['FRONT END'] += 1
-            elif damage_type.text == 'MINOR DENT/SCRATCHES':
+            elif damage == 'MINOR DENT/SCRATCHES':
                 self.damage_type_dict['MINOR DENT/SCRATCHES'] += 1
-            elif damage_type.text == 'UNDERCARRIAGE':
+            elif damage == 'UNDERCARRIAGE':
                 self.damage_type_dict['UNDERCARRIAGE'] += 1
             else:
                 self.damage_type_dict['MISC'] += 1
